@@ -5,16 +5,19 @@ require 'sinatra/reloader'
 require 'sqlite3'
 
 configure do
-  @db = SQLite3::Database.new 'barbershop.db'
-  @db.execute 'CREATE TABLE IF NOT EXISTS "Users" (
-	"id"	INTEGER,
-	"name"	TEXT,
-	"phone"	TEXT,
-	"datestamp"	TEXT,
-	"barber"	TEXT,
-	"color"	TEXT,
-	PRIMARY KEY("id" AUTOINCREMENT)
-)'
+  enable :reloader
+  set :db, SQLite3::Database.new(File.join(settings.root, 'barbershop.db'))
+
+  settings.db.execute <<~SQL
+    CREATE TABLE IF NOT EXISTS Users (
+      id  INTEGER	PRIMARY KEY AUTOINCREMENT,
+	  name  TEXT,
+	  phone	TEXT,
+	  datestamp	TEXT,
+	  barber	TEXT,
+	  color	TEXT
+  )
+  SQL
 end
 
 get '/' do
@@ -52,8 +55,15 @@ post '/visit' do
     return erb :visit
   end
 
-  erb "OK, username is #{@username}, ваш барбер #{@barber}, на #{@usertime}, 
+  settings.db.execute( 
+    'INSERT INTO Users (name, phone, datestamp, barber, color)
+    VALUES (?, ?, ?, ?, ?)', 
+    [@username, @phone, @datetime, @barber, @color]
+                     ) 
+
+  erb "OK, username is #{@username}, ваш барбер #{@barber}, на #{@datetime}, 
   вы выбрали цвет - #{@color}"
 
 end
+
 
