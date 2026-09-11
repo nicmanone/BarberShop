@@ -6,8 +6,10 @@ require 'sqlite3'
 
 configure do
   enable :reloader
-  set :db, SQLite3::Database.new(File.join(settings.root, 'barbershop.db'))
 
+  db = SQLite3::Database.new(File.join(settings.root, 'barbershop.db'))
+  db.results_as_hash = true
+  set :db, db
   settings.db.execute <<~SQL
     CREATE TABLE IF NOT EXISTS Users (
       id  INTEGER	PRIMARY KEY AUTOINCREMENT,
@@ -66,4 +68,7 @@ post '/visit' do
 
 end
 
-
+get '/showusers' do
+  @users = settings.db.execute('SELECT * FROM Users ORDER BY id DESC') 
+  erb :showusers
+end
