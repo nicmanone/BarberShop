@@ -20,6 +20,27 @@ configure do
 	  color	TEXT
   )
   SQL
+
+  settings.db.execute <<~SQL
+    CREATE TABLE IF NOT EXISTS Barbers (
+      id  INTEGER	PRIMARY KEY AUTOINCREMENT,
+	  name  TEXT
+  )
+  SQL
+
+  barbers_table = settings.db.get_first_value("SELECT COUNT(*) FROM Barbers").to_i
+  if barbers_table.zero?
+    barbers = ['Sidney', 'Antony', 'Glorie', 'Bob', 'Gus Fring']
+
+    barbers.each do |barber|
+      settings.db.execute( 
+        'INSERT INTO Barbers (name)
+        VALUES (?)', 
+        [barber]
+      ) 
+    end
+  end
+
 end
 
 get '/' do
@@ -36,11 +57,13 @@ get '/schedule' do
 end
 
 get '/visit' do
+  @barbers_list = settings.db.execute('SELECT * FROM Barbers')
   erb :visit
 end
 
 post '/visit' do
 
+  @barbers_list = settings.db.execute('SELECT * FROM Barbers')
   @username = params[:username]
   @phone = params[:phone]
   @datetime = params[:usertime]

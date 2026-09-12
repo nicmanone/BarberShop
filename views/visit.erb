@@ -17,9 +17,9 @@
     <label for="exampleInputEmail1">Ваш паркмахер:?</label>
     <select name="barber" class="form-control" aria-label="Пример выбора по умолчанию">
       <option selected>Откройте это меню выбора</option>
-      <option <%= @barber == 'Jessie Pinkman<' ? 'selected' : '' %>>Jessie Pinkman</option>
-      <option <%= @barber == 'Walter White' ? 'selected' : '' %>>Walter White</option>
-      <option <%= @barber == 'Gus Fring' ? 'selected' : '' %>>Gus Fring</option>
+      <% @barbers_list.each do |barber_name| %>
+        <option <%= @barber == barber_name['name'] ? 'selected' : '' %>><%= barber_name['name'] %></option>
+      <% end %> 
     </select>
   </div>
   <div class="form-group">
