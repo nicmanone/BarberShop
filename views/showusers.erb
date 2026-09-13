@@ -9,6 +9,7 @@
       <th>Name</th>
       <th>Phone</th>
       <th>Datestamp</th>
+      <th>Color</th>
     </tr>
   </thead>
   <tbody>
@@ -18,6 +19,7 @@
       <td><%= user['name'] %></td>
       <td><%= user['phone'] %></td>
       <td><%= user['datestamp'] %></td>
+      <td style="background-color:<%= user['color'] %>"><%= user['color'] %></td>
     <% end %>
   </tbody>
 

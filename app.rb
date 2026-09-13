@@ -104,8 +104,7 @@ post '/visit' do
     [@username, @phone, @datetime, @barber, @color]
                      ) 
 
-  erb "OK, username is #{@username}, ваш барбер #{@barber}, на #{@datetime}, 
-  вы выбрали цвет - #{@color}"
+  erb "<h2>Вы записались!</h2>"
 
 end
 
