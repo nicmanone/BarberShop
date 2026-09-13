@@ -4,6 +4,19 @@ require 'sinatra'
 require 'sinatra/reloader'
 require 'sqlite3'
 
+def is_barber_exists? db, name #знак вопроса возвращает булевое значение
+  db.execute('SELECT * FROM Barbers WHERE name=?', [name]).length > 0
+end
+
+def seed_db db, barbers
+  barbers.each do |barber|
+    if !is_barber_exists? db, barber
+      db.execute 'INSERT INTO Barbers (name) values (?)', [barber]
+    end
+  end
+end
+
+
 configure do
   enable :reloader
 
@@ -28,18 +41,21 @@ configure do
   )
   SQL
 
-  barbers_table = settings.db.get_first_value("SELECT COUNT(*) FROM Barbers").to_i
-  if barbers_table.zero?
-    barbers = ['Sidney', 'Antony', 'Glorie', 'Bob', 'Gus Fring']
+  seed_db db, ['Jessie', 'Walter', 'Gus', 'Mike']
 
-    barbers.each do |barber|
-      settings.db.execute( 
-        'INSERT INTO Barbers (name)
-        VALUES (?)', 
-        [barber]
-      ) 
-    end
-  end
+
+#  barbers_table = settings.db.get_first_value("SELECT COUNT(*) FROM Barbers").to_i
+#  if barbers_table.zero?
+#    barbers = ['Sidney', 'Antony', 'Glorie', 'Bob', 'Gus Fring']
+#
+#    barbers.each do |barber|
+#      settings.db.execute( 
+#        'INSERT INTO Barbers (name)
+#        VALUES (?)', 
+#        [barber]
+#      ) 
+#    end
+#  end
 
 end
 
